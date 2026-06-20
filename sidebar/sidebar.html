@@ -1,0 +1,172 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Klein KV Edit</title>
+  <link rel="stylesheet" href="sidebar.css" />
+</head>
+<body>
+  <div class="app">
+
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-dot"></span>
+        <span class="brand-name">Klein KV Edit</span>
+      </div>
+      <button id="openOptions" class="icon-btn" title="Options" aria-label="Options">⚙</button>
+    </header>
+
+    <main class="scroll">
+
+      <!-- VIDEO FRAME PICKER (hidden until a video is sent) -->
+      <section id="videoPanel" class="card hidden">
+        <div class="card-head">
+          <span class="card-title">Video → frame picker</span>
+          <button id="closeVideo" class="ghost-btn" title="Close video">✕ Close</button>
+        </div>
+
+        <div class="video-stage">
+          <video id="videoEl" class="video" playsinline preload="auto"></video>
+          <div id="videoLoading" class="video-loading">Loading video…</div>
+        </div>
+
+        <div class="video-controls">
+          <button id="playPause" class="icon-btn" title="Play / pause">▶</button>
+          <input type="range" id="videoScrub" class="slider" min="0" max="1000" value="0" step="1" />
+          <span id="videoTime" class="meta">0:00 / 0:00</span>
+        </div>
+
+        <div class="video-frame-row">
+          <button id="stepBack" class="solid-btn small" title="Back one frame">‹ frame</button>
+          <button id="captureFrame" class="solid-btn">📷 Capture frame → Source</button>
+          <button id="stepFwd" class="solid-btn small" title="Forward one frame">frame ›</button>
+        </div>
+      </section>
+
+      <!-- IMAGE -->
+      <section class="card">
+        <div class="card-head">
+          <span class="card-title">Source image</span>
+          <button id="clearImage" class="ghost-btn hidden">Clear</button>
+        </div>
+
+        <div id="dropZone" class="dropzone" tabindex="0">
+          <img id="imagePreview" class="preview hidden" alt="Source image" />
+          <div id="dropHint" class="dropzone-hint">
+            <div class="dropzone-icon">⤓</div>
+            <div class="dropzone-text">
+              Right-click any web image → <b>Send to Klein KV Edit</b>
+            </div>
+            <div class="dropzone-sub">…or drag, drop, or paste (Ctrl+V) an image here</div>
+          </div>
+        </div>
+        <div id="imageMeta" class="meta hidden"></div>
+      </section>
+
+      <!-- PROMPT -->
+      <section class="card">
+        <div class="card-head">
+          <span class="card-title">Prompt</span>
+          <div class="card-actions">
+            <button id="toggleBuilder" class="ghost-btn">Builder</button>
+            <button id="clearPrompt" class="ghost-btn">Clear</button>
+          </div>
+        </div>
+        <textarea id="prompt" class="textarea" rows="4"
+                  placeholder="Describe the edit you want…"></textarea>
+
+        <!-- PROMPT BUILDER -->
+        <div id="builderPanel" class="builder hidden">
+          <div class="builder-tabs-row">
+            <div class="tabs" id="builderTabs"></div>
+            <button id="addTab" class="chip-btn" title="Add tab">+</button>
+          </div>
+
+          <div class="builder-toolbar">
+            <label class="switch">
+              <input type="checkbox" id="editMode" />
+              <span>Edit mode</span>
+            </label>
+            <span class="builder-hint" id="editHint"></span>
+          </div>
+
+          <div id="builderContent"></div>
+
+          <div class="builder-footer">
+            <textarea id="builderPreview" class="textarea muted" rows="2" readonly
+                      placeholder="Enabled fragments combine here…"></textarea>
+            <button id="applyBuilder" class="solid-btn small">Insert into prompt</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- LORA -->
+      <section class="card">
+        <div class="card-head">
+          <span class="card-title">LoRA</span>
+          <span id="loraStrengthVal" class="meta">1.00</span>
+        </div>
+        <select id="loraSelect" class="select">
+          <option value="">None (base model)</option>
+        </select>
+        <div id="loraStrengthRow" class="slider-row">
+          <span class="slider-label">Strength</span>
+          <input type="range" id="loraStrength" min="0" max="2" step="0.05" value="1" class="slider" />
+        </div>
+      </section>
+
+      <!-- SEED -->
+      <section class="card">
+        <div class="card-head">
+          <span class="card-title">Seed</span>
+          <label class="switch small">
+            <input type="checkbox" id="seedLock" />
+            <span>Lock</span>
+          </label>
+        </div>
+        <div class="seed-row">
+          <input type="text" id="seed" class="input" inputmode="numeric"
+                 placeholder="random each run" />
+          <button id="randomSeed" class="icon-btn" title="Randomize seed">🎲</button>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- GENERATE DOCK -->
+    <footer class="dock">
+      <div id="progressWrap" class="progress hidden">
+        <div class="progress-bar"><div id="progressFill" class="progress-fill"></div></div>
+        <div class="progress-meta">
+          <span id="progressStage">Working…</span>
+          <span id="progressPct"></span>
+        </div>
+      </div>
+
+      <div class="dock-actions">
+        <button id="generate" class="generate-btn">
+          <span class="generate-label">Generate</span>
+        </button>
+        <button id="cancel" class="cancel-btn hidden" title="Cancel">Cancel</button>
+      </div>
+
+      <!-- RESULT -->
+      <div id="resultWrap" class="result hidden">
+        <div class="card-head">
+          <span class="card-title">Result</span>
+          <div class="card-actions">
+            <button id="openResult" class="ghost-btn">Open</button>
+            <button id="useResult" class="ghost-btn" title="Use as next source">↺ Reuse</button>
+          </div>
+        </div>
+        <img id="resultPreview" class="preview" alt="Generated result" />
+      </div>
+    </footer>
+
+  </div>
+
+  <script type="module" src="loraScanner.js"></script>
+  <script type="module" src="promptBuilder.js"></script>
+  <script type="module" src="sidebar.js"></script>
+</body>
+</html>

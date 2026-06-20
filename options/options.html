@@ -1,0 +1,28 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Klein KV Edit — Options</title>
+  <link rel="stylesheet" href="options.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>Klein KV Edit</h1>
+    <p class="subtitle">Connection settings</p>
+
+    <div class="block">
+      <label class="label" for="comfyUrl">ComfyUI server URL</label>
+      <input type="text" id="comfyUrl" placeholder="http://127.0.0.1:8188" />
+      <p class="hint">The address of your running ComfyUI instance. Used for uploads,
+        LoRA scanning, generation, and live progress.</p>
+    </div>
+
+    <div class="row">
+      <button id="save" class="primary">Save</button>
+      <span id="status"></span>
+    </div>
+  </div>
+
+  <script src="options.js"></script>
+</body>
+</html>
